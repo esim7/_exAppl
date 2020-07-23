@@ -1,9 +1,10 @@
-﻿using Infrastructure.Database.DTO;
+﻿using _exApp.DefaultResponses;
+using Infrastructure.Database.DTO;
 using MediatR;
 
 namespace _exApp.Requests
 {
-    public class GetApplicationByIdRequest : IRequest<EApplicationDto>
+    public class GetApplicationByIdRequest : IRequest<ApplicationDefaultResponse>
     {
         public int EapplicationId { get; }
 

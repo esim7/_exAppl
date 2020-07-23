@@ -1,5 +1,7 @@
-﻿using System.Threading;
+﻿using System.Net;
+using System.Threading;
 using System.Threading.Tasks;
+using _exApp.DefaultResponses;
 using _exApp.Requests;
 using AutoMapper;
 using Domain.Models.Models;
@@ -10,7 +12,7 @@ using Microsoft.VisualBasic;
 
 namespace _exApp.RequestHandlers
 {
-    public class GetApplicationByIdRequestHandler : IRequestHandler<GetApplicationByIdRequest, EApplicationDto>
+    public class GetApplicationByIdRequestHandler : IRequestHandler<GetApplicationByIdRequest, ApplicationDefaultResponse>
     {
         private readonly IRepository<EApplication> _eapplicationRepository;
         private readonly IMapper _mapper;
@@ -21,10 +23,23 @@ namespace _exApp.RequestHandlers
             _mapper = mapper;
         }
 
-        public async Task<EApplicationDto> Handle(GetApplicationByIdRequest request, CancellationToken cancellationToken)
+        public async Task<ApplicationDefaultResponse> Handle(GetApplicationByIdRequest request, CancellationToken cancellationToken)
         {
             var application = _eapplicationRepository.GetById(request.EapplicationId);
-            return _mapper.Map<EApplicationDto>(application);
+            var response = new ApplicationDefaultResponse();
+
+            if (application != null)
+            {
+                response.EApplicationDto = _mapper.Map<EApplicationDto>(application);
+                response.StatusCode = HttpStatusCode.OK;
+            }
+            else
+            {
+                response.StatusCode = HttpStatusCode.NotFound;
+                response.ErrorMessage = "Student not found!";
+            }
+
+            return response;
         }
     }
 }
